@@ -1,0 +1,41 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "org.liquibase:liquibase-gradle-plugin:2.0.2"
+  }
+}
+
+apply plugin: 'java-library'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.liquibase.gradle'
+
+liquibase {
+  activities {
+    main {
+      changeLogFile "liquibase/db.changelog.json"
+      url ''
+      username ''
+      password ''
+      classpath "src/main/resources"
+      outputFile "src/main/resources/liquibase/sql-files/db-script-oracle-${version}_${new Date().getTime()}.sql"
+    }
+    runList = 'main'
+  }
+}
+
+dependencies {
+  implementation project(':domain-api')
+  api 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation group: 'org.liquibase', name: 'liquibase-core', version: ver.liquibase
+
+  liquibaseRuntime group: 'org.liquibase', name: 'liquibase-core', version: ver.liquibase
+  liquibaseRuntime group: 'org.liquibase', name: 'liquibase-groovy-dsl', version: ver.liquibaseGroovyDsl
+  liquibaseRuntime group: 'com.oracle', name: 'ojdbc10', version: ver.oracleOjdbc
+
+  testImplementation 'com.h2database:h2'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}

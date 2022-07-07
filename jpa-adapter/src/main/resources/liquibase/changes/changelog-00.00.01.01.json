@@ -1,0 +1,56 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "changelog-00.00.01.01.json",
+        "author": "sandeep.shinde@socgen.com",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "T_DWH",
+              "columns": [
+                {
+                  "column": {
+                    "name": "TECH_ID",
+                    "type": "BIGINT",
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "CODE",
+                    "type": "BIGINT",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "DESCRIPTION",
+                    "type": "VARCHAR(255)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            },
+            "createSequence": {
+              "sequenceName": "SEQ_T_DWH",
+              "startValue": 1,
+              "incrementBy": 1
+            },
+            "sql": {
+              "dbms": "oracle",
+              "sql": "GRANT INSERT, DELETE, UPDATE, SELECT ON TEST.T_DWH TO TEST_ONL;GRANT SELECT ON TEST.SEQ_T_DWH TO TEST_ONL;"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

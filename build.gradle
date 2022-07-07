@@ -1,0 +1,108 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath group: 'io.spring.gradle', name: 'dependency-management-plugin', version: '1.0.12.RELEASE'
+        classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.7.1'
+        classpath group: 'com.societegenerale.commons', name: 'arch-unit-gradle-plugin', version:  '2.9.5'
+        classpath group: 'org.sonarsource.scanner.gradle', name: 'sonarqube-gradle-plugin', version: '2.8'
+    }
+
+    ext {
+        ver = [
+                springdoc                 : '1.6.8',
+                findbugsJsr305            : '3.0.2',
+                liquibase                 : '3.9.0',
+                liquibaseGroovyDsl        : '2.1.1',
+                oracleOjdbc               : '19c',
+                jacoco                    : '0.8.8'
+        ]
+    }
+
+
+}
+
+allprojects {
+    group = 'my.project.sandbox'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    apply plugin: 'base'
+    apply from: "$rootDir/gradle/sonar.gradle"
+    apply from: "$rootDir/gradle/jacoco.gradle"
+
+    jacoco {
+        toolVersion = ver.jacoco
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+
+    dependencies {
+        implementation group: 'com.google.code.findbugs', name: 'jsr305', version: ver.findbugsJsr305
+
+        testImplementation 'org.springframework.boot:spring-boot-starter-test',{
+            exclude group: "com.vaadin.external.google", module:"android-json"
+        }
+
+        testImplementation(platform("io.cucumber:cucumber-bom:7.3.4"))
+        testImplementation group: 'io.cucumber', name: 'cucumber-java8'
+        testImplementation group: 'io.cucumber', name: 'cucumber-spring'
+        testImplementation group: 'io.cucumber', name: 'cucumber-junit-platform-engine'
+
+        testImplementation group: 'org.junit.platform', name: 'junit-platform-suite'
+
+        compileOnly group: 'org.projectlombok', name: 'lombok'
+        annotationProcessor group: 'org.projectlombok', name: 'lombok'
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom SpringBootPlugin.BOM_COORDINATES
+        }
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_17
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    test {
+        useJUnitPlatform()
+        finalizedBy(project.tasks.jacocoTestReport)
+    }
+
+}
+
+clean {
+    delete "${projectDir}/build"
+}
+
+project.tasks["sonarqube"].dependsOn jacocoRootReport
+
+evaluationDependsOnChildren()
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    reportOn subprojects*.test.binResultsDir
+}
+subprojects {
+    test.finalizedBy(testReport)
+}

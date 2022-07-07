@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':rest-adapter')
+    implementation project(':domain')
+    implementation project(':jpa-adapter')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2'
+}

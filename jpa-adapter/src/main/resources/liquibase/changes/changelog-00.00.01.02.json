@@ -1,0 +1,38 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "changelog-00.00.01.02.json",
+        "author": "sandeep.shinde@socgen.com",
+        "changes": [
+          {
+            "insert": {
+              "columns": [
+                {
+                  "column": {
+                    "name": "TECH_ID",
+                    "value": "1000"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "CODE",
+                    "value": "1"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "DESCRIPTION",
+                    "value": "Twinkle twinkle little star"
+                  }
+                }
+              ],
+              "dbms": "h2, oracle",
+              "tableName": "T_DWH"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
